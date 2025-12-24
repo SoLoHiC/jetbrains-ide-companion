@@ -8,7 +8,10 @@
     ]]></description>
 
   <change-notes><![CDATA[
-    Initial release.
+    <h3>0.1.1</h3>
+    <ul>
+      <li>Adjusted environment variable name for auth token to GEMINI_CLI_IDE_AUTH_TOKEN.</li>
+    </ul>
     ]]></change-notes>
 
   <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html

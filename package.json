@@ -1,6 +1,6 @@
 {
   "name": "gemini-cli-jetbrains-companion",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JetBrains IDE companion for Gemini CLI",
   "private": true,
   "scripts": {
