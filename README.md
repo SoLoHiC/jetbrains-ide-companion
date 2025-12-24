@@ -2,7 +2,7 @@
 
 ## Gemini CLI Companion
 
-This plugin provides integration between [Gemini CLI](https://github.com/google-gemini/gemini-cli) and JetBrains IDEs, similar to the VS Code extension.
+This plugin provides integration between [Gemini CLI](https://github.com/google-gemini/gemini-cli) and JetBrains IDEs, similar to the VS Code extension, which both follow Gemini CLI's [ide-companion-spec](https://github.com/google-gemini/gemini-cli/blob/main/docs/ide-integration/ide-companion-spec.md).
 
 ## Features
 
