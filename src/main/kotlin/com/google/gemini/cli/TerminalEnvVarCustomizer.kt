@@ -37,6 +37,9 @@ class TerminalEnvVarCustomizer : LocalTerminalCustomizer() {
         serverState.workspacePath?.let {
             env["GEMINI_CLI_IDE_WORKSPACE_PATH"] = it
         }
+        // This is required to bypass a hardcoded check in `gemini-cli`
+        // which only allows IDE integration if TERM_PROGRAM is 'vscode'.
+        env["TERM_PROGRAM"] = "vscode"
         return command
     }
 }
