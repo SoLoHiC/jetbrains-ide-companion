@@ -64,7 +64,7 @@ private data class PortInfo(
 
 class IdeServer(private val project: Project, private val diffManager: DiffManager) {
   private var server: HttpServer? = null
-  private var portFile: File? = null
+  private var portFiles: MutableList<File> = mutableListOf()
   private val authToken = generateAuthToken()
   private val openFilesManager: OpenFilesManager = project.service()
   private val transports = mutableMapOf<String, StreamableHttpServerTransport>()
@@ -373,14 +373,32 @@ class IdeServer(private val project: Project, private val diffManager: DiffManag
       )
     val portInfoJson = McpJson.encodeToString(portInfo)
 
+    // Clear old files
+    portFiles.forEach { it.delete() }
+    portFiles.clear()
+
+    // Discovery path: /tmp/gemini/ide/gemini-ide-server-${PID}-${PORT}.json
     val ideDir = File(System.getProperty("java.io.tmpdir"), "gemini/ide").apply { mkdirs() }
-    portFile = File(ideDir, "gemini-ide-server-$ppid-$actualPort.json").apply {
-      writeText(portInfoJson)
-      setReadable(true, true)
-      setWritable(true, true)
-      deleteOnExit()
+    
+    // We write files for the current PID and its parent to ensure
+    // gemini-cli can find the file regardless of how it traverses the process tree on Linux.
+    val pids = mutableListOf(ppid)
+    ProcessHandle.of(ppid).ifPresent { handle ->
+      handle.parent().ifPresent { p1 ->
+        pids.add(p1.pid())
+      }
     }
-    LOG.info("Wrote port info to ${portFile?.absolutePath}")
+
+    pids.distinct().forEach { pid ->
+      val file = File(ideDir, "gemini-ide-server-$pid-$actualPort.json")
+      file.writeText(portInfoJson)
+      file.setReadable(true, true)
+      file.setWritable(true, true)
+      file.deleteOnExit()
+      portFiles.add(file)
+    }
+
+    LOG.info("Wrote port info to ${portFiles.size} discovery files in ${ideDir.absolutePath}")
     project.service<GeminiCliServerState>().apply {
       this.port = actualPort
       this.token = authToken
@@ -445,7 +463,7 @@ class IdeServer(private val project: Project, private val diffManager: DiffManag
     transports.keys.toList().forEach { sessionId -> cleanupSession(sessionId) }
     coroutineScope.cancel()
     server?.stop(0)
-    portFile?.delete()
+    portFiles.forEach { it.delete() }
     project.service<GeminiCliServerState>().apply {
       this.port = null
       this.token = null
