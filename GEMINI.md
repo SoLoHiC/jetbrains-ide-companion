@@ -88,7 +88,7 @@ src/main/kotlin/com/google/gemini/cli/
 
 ### Plugin Configuration
 - Plugin ID: `me.solohic.gemini-cli-companion`
-- Minimum IDE version: 2024.1 (sinceBuild="232")
+- Minimum IDE version: 2024.1 (sinceBuild="241")
 - Dependencies: IntelliJ Platform, Terminal plugin
 - Keyboard shortcut: Ctrl+Alt+G for "Run Gemini CLI"
 
